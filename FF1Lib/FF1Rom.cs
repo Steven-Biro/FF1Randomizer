@@ -223,7 +223,7 @@ namespace FF1Lib
 				EnableFreeAirship();
 			}
 
-			if (flags.FreeOrbs)
+			if (flags.FreeOrbs && !flags.ShardHunt)
 			{
 				EnableFreeOrbs();
 			}

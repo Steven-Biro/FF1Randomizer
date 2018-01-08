@@ -374,5 +374,11 @@ namespace FF1Lib
 			// Let's overwrite that string with something more appropriate for the WAIT command
 			Put(0x2CC71, FF1Text.TextToBytes("W A I T", false));
 		}
+
+		public void EnableInventoryReSort()
+		{
+			PutInBank(0x0F, 0x8680, Blob.FromHex("8663A9009D0003A900856218A000A219BD2060F0058A990003C8E8E01CD0F1A216BD2060F0058A990003C8E8E019D0F1A200BD2060F0058A990003C8E8E012D0F160"));
+			PutInBank(0x1F, 0xEF58, Blob.FromHex("A90F2003FE208086EAEAEA"));
+		}
 	}
 }
