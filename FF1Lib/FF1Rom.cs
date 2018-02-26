@@ -168,6 +168,16 @@ namespace FF1Lib
 				ShuffleEnemyFormations(rng);
 			}
 
+			if (flags.EnemyFormationsUnrunnable)
+			{
+				ShuffleUnrunnable(rng);
+			}
+
+			if (flags.EnemyFormationsSurprise)
+			{
+				ShuffleSurpriseBonus(rng);
+			}
+
 			if (flags.OrdealsPillars)
 			{
 				ShuffleOrdeals(rng, maps);
