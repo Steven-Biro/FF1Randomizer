@@ -281,6 +281,12 @@ namespace FF1Lib
 			Put(0x7E3A6, setBridgeVis);
 		}
 
+		public void ShowUnrunnables()
+		{
+			// Makes room for 7 bytes to check if runable, if not, executes the message shown when you fail to run
+			Put(0x313C4, Blob.FromHex("8DF86A8DAE6B8D8C6CAD916D2901F007A9242007AAD045A9008D5768AD1161186D14614A4A4A8D5668A264205DAEAAA90020DDAEAE906D200AAFEAEAEA2006D8"));
+		}
+
 
 	}
 }
