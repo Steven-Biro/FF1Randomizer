@@ -67,11 +67,30 @@ namespace FF1Lib
 			Put(0x337C5, Blob.FromHex("209FB6EAEAEAEA"));
 			// SABR's hit% bonus
 			Put(0x30390, Blob.FromHex("0A"));
-		}
+
+			// make XFER affect enemies
+			// Replace second copy of low bye for hp with elemental resistance
+			Put(0x32FE1, Blob.FromHex("13"));
+			// Switch from reading elemental resistance from ROM to RAM
+            Put(0x32537, Blob.FromHex("848D76"));  // This affects elemental wepon damage and can be disabled for only spell fixes
+			// Switch to reading elemental resistance from ROM to RAM and make room for the extra byte
+            Put(0x3370A, Blob.FromHex("A012B1908D7768A009B1908D7E68B1928D7F68C8B1908D8568C8B1908D82684CFABB00000000"));
+			// add JSR to new routine for the extra room
+			Put(0x3378C, Blob.FromHex("20B5B6"));
+			// move 3 byes from previous subroutine and save elemental resistance of the enemy
+            Put(0x336B5, Blob.FromHex("C89190AD7768A01291906000000000000000")); // extra room at the end for new code
+        }
 
 		public void FixEnemyStatusAttackBug()
 		{
 			Put(0x32812, Blob.FromHex("DF")); // This is the craziest freaking patch ever, man.
 		}
+
+		public void FixEnmeyAOESpells()
+		{
+			// Remove comparison and branch on equal which skips the caster when casting aoe spells
+			Put(0x33568, Blob.FromHex("EAEAEAEAEAEAEAEA"));
+		}
+
 	}
 }
