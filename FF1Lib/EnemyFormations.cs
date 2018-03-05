@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using RomUtilities;
+using System.Diagnostics;
 
 namespace FF1Lib
 {
@@ -13,6 +14,10 @@ namespace FF1Lib
 		private const int NormalFormationCount = 115;      // Number of formations before all the boss encounters.
 		private const int BossFormationCount = 13;         // Lichx2, Karyx2, Krakenx2, Tiamatx2, Chaos, Vampire, Astos, Pirates, Garland
 		private const int VanillaUnrunnableCount = 13;     // 13 of the Vanilla normal formations are unrunnable.
+
+		private const int DomainOffset= 0x2C000;
+		private const int DomainSize = 8;
+		private const int DomainCount = 128;
 
 		// Formation Data Offsets ripped straight from Disch's variables.inc
 		private const byte TypeOffset = 0x00;             // battle type (high 4 bits)
@@ -51,6 +56,17 @@ namespace FF1Lib
 
 			formations.Zip(chances, (formation, chance) => formation[SurpriseOffset] = chance);
 			Put(FormationsOffset, formations.SelectMany(formation => formation.ToBytes()).ToArray());
+		}
+
+		public void ShuffleBattleDomains(MT19337 rng)
+		{
+			List<Blob> domains = Get(DomainOffset, DomainSize * DomainCount).Chunk(DomainSize);
+			for (int i = 0; i < DomainCount; i++)
+			{
+				var domain = domains[i].Chunk(1);
+				domain.Shuffle(rng);
+				domains[i] = Blob.Concat(domain);
+			}
 		}
 	}
 
