@@ -53,7 +53,7 @@ namespace FF1Lib
 			Put(0x33A4E, Blob.FromHex("F017EA")); // LOCK routine
 			Put(0x3029C, Blob.FromHex("0E")); // LOK2 spell effect
 			Put(0x302F9, Blob.FromHex("18")); // HEL2 effectivity
-			Put(0x3AEF0, Blob.FromHex("187D0063")); // Allows last slot in a spell level to be used outside of battle
+			Put(0x3AEF3, Blob.FromHex("187D0063")); // Allows last slot in a spell level to be used outside of battle
 
 			// TMPR and SABR
 			// Remove jump to PrepareEnemyMagAttack
