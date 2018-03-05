@@ -124,6 +124,7 @@ namespace FF1RandomizerOnline.Controllers
 					EnemyElementalResistancesBug = true,
 					EnemySpellsTargetingAllies = true,
 
+
 					ForcedPartyMembers = 0,
 					PriceScaleFactor = 3.0,
 					EnemyScaleFactor = 1.5,
