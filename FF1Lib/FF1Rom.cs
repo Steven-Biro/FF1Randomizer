@@ -111,6 +111,11 @@ namespace FF1Lib
 				FixEnemyAOESpells();
 			}
 
+			if (flags.ItemMagic)
+			{
+				ShuffleItemMagic(rng);
+			}
+
 			if (flags.Shops)
 			{
 				shopItemLocation = ShuffleShops(rng, flags.EnemyStatusAttacks, flags.RandomWares);
