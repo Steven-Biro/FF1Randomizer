@@ -105,6 +105,7 @@ namespace FF1Lib
 			// This has to be done before we shuffle spell levels.
 			if (flags.SpellBugs)
 			{
+				ShuffleItemMagic(rng);
 				FixSpellBugs();
 			}
 
