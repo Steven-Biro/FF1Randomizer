@@ -339,6 +339,7 @@ namespace FF1Lib
 
 			WriteSeedAndFlags(Version, seed.ToHex(), Flags.EncodeFlagsText(flags));
 			ExtraTrackingAndInitCode();
+			MakeSpaceIn1F();
 		}
 
 		private void ExtraTrackingAndInitCode()
@@ -443,6 +444,19 @@ namespace FF1Lib
 			// Fast Battle Boxes Undraw (Similar... yet different!)
 			PutInBank(0x0F, 0x8A80, Blob.FromHex("A9A0858AA923858BA97E8588A96A858960"));
 			PutInBank(0x0F, 0x8AA0, Blob.FromHex($"A9{BattleBoxUndrawRows}8DB96820A1F420E8F4A58838E9208588A589E9008589A58A38E920858AA58BE900858BCEB968D0DE60"));
+		}
+
+		public void MakeSpaceIn1F()
+		{
+			// 54 bytes starting at 0xC265 in bank 1F, ROM offset: 7C275
+			// This removes the code for the minigame on the ship, and moves the prior code around too
+			PutInBank(0x1F, 0xC244, Blob.FromHex("F003C6476020C2D7A520290FD049A524F00EA9008524A542C908F074C901F0B160EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
+			// 15 bytes starting at 0xC8A4 in bank 1F, ROM offset: 7C8B4
+			// This removes the routine that give a reward for beating the minigame, no need for a reward without the minigame 
+			PutInBank(0x1F, 0xC8A4, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
+			// 28 byte sstarting at 0xCFCB in bank 1F, ROM offset: 7CFDB
+			// This removes the AssertNasirCRC routine, which we were skipping anyways, no point in keeping uncalled routines
+			PutInBank(0x1F, 0xCFCB, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
 		}
 
 		public override bool Validate()
