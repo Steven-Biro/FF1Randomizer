@@ -273,6 +273,7 @@ namespace FF1Lib
 
 			WriteSeedAndFlags(Version, seed.ToHex(), Flags.EncodeFlagsText(flags));
 			ExtraTrackingAndInitCode();
+			MakeSpaceIn1F();
 		}
 		private void ExtraTrackingAndInitCode()
 		{
@@ -356,6 +357,16 @@ namespace FF1Lib
 			Put(0x3A1B5, Blob.FromHex("2040D8D0034C56A1EA"));
 			// Move Most of LoadBorderPalette_Blue out of the way to do a dynamic version.
 			PutInBank(0x0F, 0x8700, Blob.FromHex("988DCE038DEE03A90F8DCC03A9008DCD03A9308DCF0360"));
+		}
+
+		public void MakeSpaceIn1F()
+		{
+			// 54 bytes starting at 0xC265 in bank 1F, ROM offset: 7C275
+			PutInBank(0x1F, 0xC244, Blob.FromHex("F003C6476020C2D7A520290FD049A524F00EA9008524A542C908F074C901F0B160EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
+			// 15 bytes starting at 0xC8A4 in bank 1F, ROM offset: 7C8B4
+			PutInBank(0x1F, 0xC8A4, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
+			// 28 byte sstarting at 0xCFCB in bank 1F, ROM offset: 7CFDB
+			PutInBank(0x1F, 0xCFCB, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
 		}
 
 		public override bool Validate()
