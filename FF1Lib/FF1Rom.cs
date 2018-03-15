@@ -362,10 +362,13 @@ namespace FF1Lib
 		public void MakeSpaceIn1F()
 		{
 			// 54 bytes starting at 0xC265 in bank 1F, ROM offset: 7C275
+			// This removes the code for the minigame on the ship, and moves the prior code around too
 			PutInBank(0x1F, 0xC244, Blob.FromHex("F003C6476020C2D7A520290FD049A524F00EA9008524A542C908F074C901F0B160EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
 			// 15 bytes starting at 0xC8A4 in bank 1F, ROM offset: 7C8B4
+			// This removes the routine that give a reward for beating the minigame, no need for a reward without the minigame 
 			PutInBank(0x1F, 0xC8A4, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
 			// 28 byte sstarting at 0xCFCB in bank 1F, ROM offset: 7CFDB
+			// This removes the AssertNasirCRC routine, which we were skipping anyways, no point in keeping uncalled routines
 			PutInBank(0x1F, 0xCFCB, Blob.FromHex("EAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEAEA"));
 		}
 
