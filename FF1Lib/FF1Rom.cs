@@ -294,7 +294,8 @@ namespace FF1Lib
 			}
 
 			var itemText = ReadText(ItemTextPointerOffset, ItemTextPointerBase, ItemTextPointerCount);
-			FixVanillaRibbon(itemText);
+			itemText[(int)Item.Ribbon][7] = 0x00;
+
 			ExpGoldBoost(flags.ExpBonus, flags.ExpMultiplier);
 			ScalePrices(flags.PriceScaleFactor, flags.ExpMultiplier, flags.VanillaStartingGold, itemText, rng);
 
