@@ -72,6 +72,7 @@
 					<div class="checkbox-cell"><input v-model="MagicLevels" type="checkbox" asp-for="Flags.MagicLevels" /> <label asp-for="Flags.MagicLevels">Magic Levels</label></div>
 					<div class="checkbox-cell"><input v-model="MagicPermissions" :disabled="!MagicLevels" class="indent" type="checkbox" asp-for="Flags.MagicPermissions" /> <label :style="!MagicLevels ? { color: 'grey'} : {}" asp-for="Flags.MagicPermissions">Keep Permissions</label></div>
 					<div class="checkbox-cell"><input v-model="ItemMagic" type="checkbox" asp-for="Flags.ItemMagic" /> <label asp-for="Flags.ItemMagic">Item Magic</label> <small>(<a asp-area="" asp-controller="Home" asp-action="WhatsNew">2.2.0</a>)</small></div>
+					<div class="checkbox-cell"><input v-model="ShufflePromotions" type="checkbox" asp-for="Flags.ShufflePromotions" /> <label asp-for="Flags.ShufflePromotions">Class Promotions</label></div>
 				</div>
 				<div class="col-xs-4">
 					<div class="checkbox-cell"><input v-model="EnemyScripts" type="checkbox" asp-for="Flags.EnemyScripts" /> <label asp-for="Flags.EnemyScripts">Enemy Scripts</label></div>
@@ -226,6 +227,10 @@
 					<div class="slider-cell" title="Instead of capping, allow overflow values to start over at one"><input v-model="WrapStatOverflow" type="checkbox" asp-for="Flags.WrapStatOverflow" /> <label asp-for="Flags.WrapStatOverflow">Restart overflow at 1</label></div>
 					<div class="slider-cell"></div>
 					<div class="slider-cell" title="Scale Initial Gold with Prices and Gold scaling"><input v-model="StartingGold" type="checkbox" asp-for="Flags.StartingGold" /> <label asp-for="Flags.StartingGold">Starting Gold</label></div>
+					<div class="slider-cell"></div>
+					<div class="slider-cell"></div>
+					<div class="slider-cell"></div>
+					<div class="slider-cell" title="Allows None to be chosen and forced in every slot after the first"><input v-model="AllowNone" type="checkbox" asp-for="Flags.AllowNone" /> <label asp-for="Flags.AllowNone">Allow None</label></div>
 				</div>
 			</div>
 			<div class="section tab-pane" id="conveniences">

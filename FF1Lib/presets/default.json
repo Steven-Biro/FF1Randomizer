@@ -99,6 +99,9 @@
     "EnemyElementalResistancesBug": true,
     "ImproveTurnOrderRandomization": true,
 
+    "ShufflePromotions": false,
+    "AllowNone":  true,
+
     "EnemyScaleFactor": 1.5,
     "PriceScaleFactor": 3.0,
     "ExpMultiplier": 2.5,
