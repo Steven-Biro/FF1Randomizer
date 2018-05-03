@@ -207,7 +207,10 @@ namespace FF1Lib
 		public int ExpBonus { get; set; }
 		[FlagString(Character = 21, Multiplier = 1)]
 		public int ForcedPartyMembers { get; set; }
-		
+		[FlagString(Character = 22, FlagBit = 1)]
+		public bool AllowNone { get; set; }
+
+
 		public bool ModernBattlefield { get; set; }
 		public bool FunEnemyNames { get; set; }
 		public bool PaletteSwap { get; set; }

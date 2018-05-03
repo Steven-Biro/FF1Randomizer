@@ -128,12 +128,13 @@ namespace FF1Lib
 		{
 			// Always randomize all 4 default members (but don't force if not needed)
 			Data[0x3A0AE] = (byte)rng.Between(0, 5);
-			Data[0x3A0BE] = (byte)rng.Between(0, 5);
-			Data[0x3A0CE] = (byte)rng.Between(0, 5);
-			Data[0x3A0DE] = (byte)rng.Between(0, 5);
+			Data[0x3A0BE] = (byte)(rng.Between(0, 6) - 1);
+			Data[0x3A0CE] = (byte)(rng.Between(0, 6) - 1);
+			Data[0x3A0DE] = (byte)(rng.Between(0, 6) - 1);
 
-			if (numberForced <= 0)
-				return;
+			// this results in vinilla behaviour, so it doesnt matter AND it allow for Nones to be included easier
+			//if (numberForced <= 0)  
+			//	return;
 
 			Data[0x39D35] = 0xE0;
 			Data[0x39D36] = (byte)(numberForced * 0x10);
@@ -151,6 +152,56 @@ namespace FF1Lib
 				*/
 		}
 
+		public void AllowNone()
+		{
+			Put(0x39D40, Blob.FromHex("07C9FFD0039D0003"));
+			/* Allow class FF
+			 * SBC #$07
+			 * CMP #$FF
+			 * BNE :+
+			 * STA ptygen_class, X
+			 * : STA menustall
+			 */
+
+			// make room in bank 0E
+			PutInBank(0x0E, 0xB816, Blob.FromHex("206BC24C95EC"));
+			PutInBank(0x1F, 0xC26B, CreateLongJumpTableEntry(0x0F, 0x8B40));
+			PutInBank(0x0F, 0x8B40, Blob.FromHex("A562851029030A851118651165110A0A0A1869508540A5100A0A29F0186928854160"));
+
+			// allow slots 2-4 to have none, slot 1 cannot
+			PutInBank(0x0E, 0xB81C, Blob.FromHex("E000F005C9FFF00760C9FFD005A9009D0003A90160"));
+			PutInBank(0x0E, 0x9D41, Blob.FromHex("201CB8EAEAEAEA"));
+
+			// Name Drawing for None
+			PutInBank(0x0E, 0x9ED9, Blob.FromHex("2071C2"));
+			PutInBank(0x1F, 0xC271, CreateLongJumpTableEntry(0x0F, 0x8B70));
+			PutInBank(0x0F, 0x8B70, Blob.FromHex("18C9FFD016A9828D3E00A98B8D3F004C9F8B97B2B1A8FFFFFFFF0069F08D5F00A9028D5E00A95E8D3E00A9008D3F00A90F8D57008D58008A482036DE68AA60"));
+			PutInBank(0x0E, 0x9EDC, Get(0x39EF7, 0x2F));
+
+			// Load stats for None
+			PutInBank(0x1F, 0xC783, Blob.FromHex("20B0B0C931F053EA"));
+			PutInBank(0x00, 0xB0B0, Blob.FromHex("BD0061C9FFD013A9019D0161A9009D07619D08619D0961A931600A0A0A0AA860"));
+
+			//clinic stuff
+			PutInBank(0x0E, 0xA6F3, Blob.FromHex("203E9B"));
+			PutInBank(0x0E, 0x9B3E, Blob.FromHex("BD0061C9FFD00568684C16A7BD016160"));
+
+			// curing ailments out of battle, allow the waste of things in battle
+			PutInBank(0x0E, 0xB388, Blob.FromHex("2077C2"));
+			PutInBank(0x1F, 0xC277, CreateLongJumpTableEntry(0x0F, 0x8BB0));
+			PutInBank(0x0F, 0x8BB0, Blob.FromHex("A5626A6A6A29C0AABD0061C9FFD003A90060BD016160"));
+
+			// promotion doesnt change from class FF
+			PutInBank(0x0E, 0x95AE, Blob.FromHex("A00098186A6A6AAABD0061C9FFF0061869069D0061C8C004D0E8EE560060"));
+
+			// Battle sprite
+			PutInBank(0x1F, 0xEB1E, Blob.FromHex("2080B9EAEAEAEAEA"));
+			PutInBank(0x09, 0xB980, Blob.FromHex("A202C9FFF0070A1869908511606868A000A9008D0720C8D0FACAD0F760"));
+
+			// MapMan for Nones
+			PutInBank(0x1F, 0xE92E, Blob.FromHex("20608FEAEAEAEA"));
+			PutInBank(0x02, 0x8F60, Blob.FromHex("A9008510AD0061C9FFF00160A92560"));
+		}
 		public void DisablePartyShuffle()
 		{
 			var nops = new byte[PartyShuffleSize];
