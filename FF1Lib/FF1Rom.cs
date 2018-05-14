@@ -12,7 +12,7 @@ namespace FF1Lib
 	// ReSharper disable once InconsistentNaming
 	public partial class FF1Rom : NesRom
 	{
-		public const string Version = "2.2.0";
+		public const string Version = "2.3.0";
 
 		public const int RngOffset = 0x7F100;
 		public const int RngSize = 256;
@@ -89,9 +89,9 @@ namespace FF1Lib
 			PermanentCaravan();
 			ShiftEarthOrbDown();
 
-			var overworldMap = new OverworldMap(this, flags);
+			var palettes = OverworldMap.GeneratePalettes(Get(OverworldMap.MapPaletteOffset, MapCount * OverworldMap.MapPaletteSize).Chunk(OverworldMap.MapPaletteSize));
+			var overworldMap = new OverworldMap(this, flags, palettes);
 			var maps = ReadMaps();
-			var incentivesData = new IncentiveData(rng, flags, overworldMap.MapLocationRequirements);
 			var shopItemLocation = ItemLocations.CaravanItemShop1;
 
 			if (flags.ModernBattlefield)
@@ -120,19 +120,6 @@ namespace FF1Lib
 				ShuffleItemMagic(rng);
 			}
 
-			if (flags.Shops)
-			{
-				var excludeItemsFromRandomShops = flags.Treasures
-					? incentivesData.ForcedItemPlacements.Select(x => x.Item).Concat(incentivesData.IncentiveItems).ToList()
-					: new List<Item>();
-				shopItemLocation = ShuffleShops(rng, flags.EnemyStatusAttacks, flags.RandomWares, excludeItemsFromRandomShops);
-			}
-
-			if (flags.Treasures || flags.NPCItems || flags.NPCFetchItems)
-			{
-				ShuffleTreasures(rng, flags, incentivesData, shopItemLocation, overworldMap.MapLocationRequirements);
-			}
-
 			if (flags.Treasures && flags.ShardHunt && !flags.ChaosRush)
 			{
 				EnableShardHunt(rng, flags.ExtraShards ? rng.Between(24, 30) : 16, maps);
@@ -141,6 +128,41 @@ namespace FF1Lib
 			if (flags.TransformFinalFormation)
 			{
 				TransformFinalFormation((FinalFormation)rng.Between(0, Enum.GetValues(typeof(FinalFormation)).Length - 1));
+			}
+
+			var maxRetries = 500;
+			for (var i = 0; i < maxRetries; i++)
+			{
+				try
+				{
+					overworldMap = new OverworldMap(this, flags, palettes);
+					if ((flags.Entrances || flags.Floors || flags.Towns) && flags.Treasures && flags.NPCItems)
+					{
+						overworldMap.ShuffleEntrancesAndFloors(rng, flags);
+					}
+
+					var incentivesData = new IncentiveData(rng, flags, overworldMap.MapLocationRequirements, overworldMap.FloorLocationRequirements, overworldMap.FullLocationRequirements);
+
+					if (flags.Shops)
+					{
+						var excludeItemsFromRandomShops = flags.Treasures
+							? incentivesData.ForcedItemPlacements.Select(x => x.Item).Concat(incentivesData.IncentiveItems).ToList()
+							: new List<Item>();
+						shopItemLocation = ShuffleShops(rng, flags.EnemyStatusAttacks, flags.RandomWares, excludeItemsFromRandomShops);
+					}
+
+					if (flags.Treasures || flags.NPCItems || flags.NPCFetchItems)
+					{
+						ShuffleTreasures(rng, flags, incentivesData, shopItemLocation, overworldMap.MapLocationRequirements, overworldMap.FloorLocationRequirements, overworldMap.FullLocationRequirements);
+					}
+					break;
+				}
+				catch (InsaneException)
+				{
+					Console.WriteLine("Insane seed. Retrying");
+					if (maxRetries > (i + 1)) continue;
+					throw new InvalidOperationException("Failed Sanity Check too many times");
+				}
 			}
 
 			if (flags.MagicShops)
@@ -218,7 +240,7 @@ namespace FF1Lib
 			{
 				EnableEarlySage();
 			}
-			
+
 			if (flags.FreeBridge)
 			{
 				EnableFreeBridge();
@@ -233,7 +255,7 @@ namespace FF1Lib
 			{
 				EnableFreeOrbs();
 			}
-			
+
 			if (flags.NoPartyShuffle)
 			{
 				DisablePartyShuffle();
@@ -312,7 +334,8 @@ namespace FF1Lib
 			var itemText = ReadText(ItemTextPointerOffset, ItemTextPointerBase, ItemTextPointerCount);
 			FixVanillaRibbon(itemText);
 			ExpGoldBoost(flags.ExpBonus, flags.ExpMultiplier);
-			ScalePrices(flags.PriceScaleFactor, flags.ExpMultiplier, flags.VanillaStartingGold, itemText, rng);
+			ScalePrices(flags, itemText, rng);
+			ScaleEncounterRate(flags.EncounterRate / 50.0);
 
 			overworldMap.ApplyMapEdits();
 			WriteMaps(maps);
@@ -321,7 +344,7 @@ namespace FF1Lib
 
 			if (flags.EnemyScaleFactor > 1)
 			{
-				ScaleEnemyStats(flags.EnemyScaleFactor, rng);
+				ScaleEnemyStats(flags.EnemyScaleFactor, flags.WrapStatOverflow, rng);
 			}
 
 			if (flags.ForcedPartyMembers > 0)
@@ -384,21 +407,6 @@ namespace FF1Lib
 			// Put LongJump routine 6 bytes after UpdateJoy used to be
 			PutInBank(0x1F, 0xD7C8, Blob.FromHex("85E99885EA6885EB6885ECA001B1EB85EDC8B1EB85EEC8ADFC6085E8B1EB2003FEA9D748A9F548A5E9A4EA6CED0085E9A5E82003FEA5E960"));
 			// LongJump entries can start at 0xD800 and must stop before 0xD850 (at which point additional space will need to be freed to make room)
-
-			/* Locations of tracked stats:
-			 *	Steps:          $60A0 (24-bit)
-			 *	Hard Resets:    $64A3 (16-bit)
-			 *	Soft Resets:    $64A5 (16-bit)
-			 *	Battles:        $60A7 (16-bit)
-			 *	Ambushes:       $60A9 (16-bit)
-			 *	Strike Firsts:  $60AB (16-bit)
-			 *	Close Calls...: $60AD (16-bit)
-			 *	Damage Dealt:   $60AF (24-bit)
-			 *	Damage Taken:   $60B2 (24-bit)
-			 *	Perished:		$64B5 (8-bit)
-			 *	"Nothing Here":	$60B6 (8-bit)
-			 *	Chests Open     $60B7 (8-bit)
-			*/
 
 			// Patches for various tracking variables follow:
 			// Pedometer + chests opened
@@ -534,6 +542,14 @@ namespace FF1Lib
 			rngTable.Shuffle(rng);
 
 			Put(RngOffset, rngTable.SelectMany(blob => blob.ToBytes()).ToArray());
+		}
+
+		private void ScaleEncounterRate(double multiplier)
+		{
+			var newRng = Get(RngOffset, RngSize).ToBytes()
+				.Select(x => (byte)(multiplier <= 0.01 ? 240 : Math.Min(240, x / multiplier)))
+				.ToArray();
+			Put(RngOffset, newRng);
 		}
 
 		public void ExpGoldBoost(double bonus, double multiplier)
