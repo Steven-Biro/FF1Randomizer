@@ -35,7 +35,9 @@ namespace FF1Lib
 			Put(offset, Blob.FromHex(output));
 
 			// if the item is the Defense, overwrite the last character in the name, otherwise, keep the icon there.
-			output = Spell.Name.ToHex().Remove(12) + (item == Item.Defense ? "FF" : "");
+			output = Spell.Name.ToHex().Remove(10) +
+				(item == Item.BlackShirt ? "DF" : "") +
+				(item == Item.Defense ? "FFFF" : "FF");
 			offset = GearTextOffset + ((byte)item > (byte)Item.Ribbon ? 1 : 0) + GearTextSize * ((byte)item - WeaponStart);
 			Put(offset, Blob.FromHex(output));
 		}
