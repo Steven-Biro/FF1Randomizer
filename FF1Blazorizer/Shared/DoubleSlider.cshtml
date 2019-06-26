@@ -1,0 +1,34 @@
+﻿<section class="range-slider">
+	<span class="rangeValues"></span>
+	<input value="@Value" onchange="@onchange" min="@Min" max="@Max" step="@Step" type="range" />
+	<input value="@Value2" onchange="@onchange2" min="@Min" max="@Max" step="@Step" type="range" />
+</section>
+
+@functions
+{
+	[Parameter]
+	private double Value { get; set; }
+	[Parameter]
+	private double Value2 { get; set; }
+	[Parameter]
+	private Action<double, double> ValueChanged { get; set; }
+
+	void onchange(UIChangeEventArgs e)
+	{
+		Value = double.Parse((string)e.Value);
+		ValueChanged(Value, Value2);
+	}
+
+	void onchange2(UIChangeEventArgs e)
+	{
+		Value2 = double.Parse((string)e.Value);
+		ValueChanged(Value, Value2);
+	}
+
+	[Parameter]
+	private double Min { get; set; }
+	[Parameter]
+	private double Max { get; set; }
+	[Parameter]
+	private double Step { get; set; }
+}

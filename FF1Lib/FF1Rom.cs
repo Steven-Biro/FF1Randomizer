@@ -549,7 +549,7 @@ namespace FF1Lib
 			itemText[(int)Item.Ribbon].Trim();
 
 			ExpGoldBoost(flags.ExpBonus, flags.ExpMultiplier);
-			ScalePrices(flags, itemText, rng, ((bool)flags.ClampMinimumPriceScale), shopItemLocation);
+			ScalePrices(flags, itemText, rng, false, shopItemLocation);
 			ScaleEncounterRate(flags.EncounterRate / 30.0, flags.DungeonEncounterRate / 30.0);
 
 			overworldMap.ApplyMapEdits();

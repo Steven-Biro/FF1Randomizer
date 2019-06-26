@@ -1091,13 +1091,22 @@ namespace FF1Lib
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("BossScaleFactor"));
 			}
 		}
-		public double PriceScaleFactor
+		public double PriceScaleFactorMin
 		{
-			get => Flags.PriceScaleFactor;
+			get => Flags.PriceScaleFactorMin;
 			set
 			{
-				Flags.PriceScaleFactor = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PriceScaleFactor"));
+				Flags.PriceScaleFactorMin = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PriceScaleFactorMin"));
+			}
+		}
+		public double PriceScaleFactorMax
+		{
+			get => Flags.PriceScaleFactorMax;
+			set
+			{
+				Flags.PriceScaleFactorMax = value;
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("PriceScaleFactorMax"));
 			}
 		}
 		public bool WrapPriceOverflow
@@ -1161,15 +1170,6 @@ namespace FF1Lib
 			{
 				Flags.ClampMinimumBossStatScale = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ClampMinimumBossStatScale"));
-			}
-		}
-		public bool? ClampMinimumPriceScale
-		{
-			get => Flags.ClampMinimumPriceScale;
-			set
-			{
-				Flags.ClampMinimumPriceScale = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ClampMinimumPriceScale"));
 			}
 		}
 
@@ -1683,15 +1683,6 @@ namespace FF1Lib
 			{
 				Flags.WorldWealth = value;
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WorldWealthEnum"));
-			}
-		}
-		public bool? ClampPrices
-		{
-			get => Flags.ClampMinimumPriceScale;
-			set
-			{
-				Flags.ClampMinimumPriceScale = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ClampPrices"));
 			}
 		}
 		public bool? ClampEnemies

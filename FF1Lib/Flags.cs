@@ -148,7 +148,9 @@ namespace FF1Lib
 
 		public double EnemyScaleFactor { get; set; } = 0;
 		public double BossScaleFactor { get; set; } = 0;
-		public double PriceScaleFactor { get; set; } = 0;
+		public double PriceScaleFactorMin { get; set; } = 0;
+		public double PriceScaleFactorMax { get; set; } = 0;
+
 
 		public double ExpMultiplier { get; set; } = 0;
 		public int ExpBonus { get; set; } = 0;
@@ -206,7 +208,6 @@ namespace FF1Lib
 
 		public bool? ClampMinimumStatScale { get; set; } = false;
 		public bool? ClampMinimumBossStatScale { get; set; } = false;
-		public bool? ClampMinimumPriceScale { get; set; } = false;
 
 		public bool ExperimentalFloorGeneration { get; set; } = false;
 		public bool EFGWaterfall { get; set; } = false;
@@ -566,7 +567,8 @@ namespace FF1Lib
 			sum = AddBoolean(sum, flags.NoDanMode);
 			sum = AddNumeric(sum, 41, (int)(10.0*flags.EnemyScaleFactor) - 10);
 			sum = AddNumeric(sum, 41, (int)(10.0 * flags.BossScaleFactor) - 10);
-			sum = AddNumeric(sum, 41, (int)(10.0 * flags.PriceScaleFactor) - 10);
+			sum = AddNumeric(sum, 41, (int)(10.0 * flags.PriceScaleFactorMin) - 10);
+			sum = AddNumeric(sum, 41, (int)(10.0 * flags.PriceScaleFactorMax) - 10);
 			sum = AddNumeric(sum, 41, (int)(10.0 * flags.ExpMultiplier) - 10);
 			sum = AddNumeric(sum, 51, (int)(flags.ExpBonus/10.0));
 			sum = AddNumeric(sum, 46, (int)flags.EncounterRate);
@@ -615,7 +617,6 @@ namespace FF1Lib
 			sum = AddTriState(sum, flags.RecruitmentModeHireOnly);
 			sum = AddTriState(sum, flags.ClampMinimumStatScale);
 			sum = AddTriState(sum, flags.ClampMinimumBossStatScale);
-			sum = AddTriState(sum, flags.ClampMinimumPriceScale);
 			sum = AddBoolean(sum, flags.ExperimentalFloorGeneration);
 			sum = AddBoolean(sum, flags.EFGWaterfall);
 			sum = AddBoolean(sum, flags.EFGEarth1);
@@ -654,7 +655,6 @@ namespace FF1Lib
 				EFGEarth1 = GetBoolean(ref sum),
 				EFGWaterfall = GetBoolean(ref sum),
 				ExperimentalFloorGeneration = GetBoolean(ref sum),
-				ClampMinimumPriceScale = GetTriState(ref sum),
 				ClampMinimumBossStatScale = GetTriState(ref sum),
 				ClampMinimumStatScale = GetTriState(ref sum),
 				RecruitmentModeHireOnly = GetTriState(ref sum),
@@ -703,7 +703,8 @@ namespace FF1Lib
 				EncounterRate = GetNumeric(ref sum, 46),
 				ExpBonus = GetNumeric(ref sum, 51) * 10,
 				ExpMultiplier = (GetNumeric(ref sum, 41) + 10) / 10.0,
-				PriceScaleFactor = (GetNumeric(ref sum, 41) + 10) / 10.0,
+				PriceScaleFactorMax = (GetNumeric(ref sum, 41) + 10) / 10.0,
+				PriceScaleFactorMin = (GetNumeric(ref sum, 41) + 10) / 10.0,
 				BossScaleFactor = (GetNumeric(ref sum, 41) + 10) / 10.0,
 				EnemyScaleFactor = (GetNumeric(ref sum, 41) + 10) / 10.0,
 				NoDanMode = GetBoolean(ref sum),
